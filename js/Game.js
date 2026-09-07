@@ -26,11 +26,27 @@ class Game {
       "Zone C - Midrand"
     ]);
 
+    this.logicalWidth = 960;
+    this.logicalHeight = 640;
+
     this.setupWorld();
+    this.setupResponsiveCanvas();
     this.bindUIHandlers();
     this.bindInputHandlers();
     this.gameUI.showStart();
     this.renderFrame();
+  }
+
+  setupResponsiveCanvas() {
+    const applyCanvasSize = () => {
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      this.canvasElement.width = this.logicalWidth * pixelRatio;
+      this.canvasElement.height = this.logicalHeight * pixelRatio;
+      this.renderContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+
+    applyCanvasSize();
+    window.addEventListener("resize", applyCanvasSize);
   }
 
   setupWorld() {
@@ -196,7 +212,7 @@ class Game {
 
     this.playerVehicle.resetTerrainDrag();
     this.playerVehicle.updateMovement(this.inputState, this.environment);
-    Physics.clampToBounds(this.playerVehicle, this.canvasElement.width, this.canvasElement.height, 20);
+    Physics.clampToBounds(this.playerVehicle, this.logicalWidth, this.logicalHeight, 20);
 
     this.obstacles.forEach((obstacle) => obstacle.update());
     this.handleCollisions();
@@ -325,8 +341,8 @@ class Game {
   }
 
   renderFrame() {
-    const canvasWidth = this.canvasElement.width;
-    const canvasHeight = this.canvasElement.height;
+    const canvasWidth = this.logicalWidth;
+    const canvasHeight = this.logicalHeight;
 
     this.renderContext.save();
     this.renderContext.globalAlpha = this.environment.visibilityAlpha;
