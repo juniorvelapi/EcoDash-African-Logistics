@@ -13,6 +13,13 @@ const Collision = {
     return distance < circleA.radius + circleB.radius;
   },
 
+  circleRectOverlap(circle, rect) {
+    const closestX = Physics.clamp(circle.x, rect.x, rect.x + rect.width);
+    const closestY = Physics.clamp(circle.y, rect.y, rect.y + rect.height);
+    const distance = Physics.distance(circle.x, circle.y, closestX, closestY);
+    return distance <= circle.radius;
+  },
+
   pointInRect(pointX, pointY, rect) {
     return (
       pointX >= rect.x &&

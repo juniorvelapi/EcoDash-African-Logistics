@@ -13,9 +13,10 @@ class SolarZone {
   }
 
   containsPlayer(playerVehicle) {
-    return Collision.circleOverlap(
+    const playerBounds = playerVehicle.getBounds();
+    return Collision.circleRectOverlap(
       { x: this.x, y: this.y, radius: this.radius },
-      { x: playerVehicle.x, y: playerVehicle.y, radius: 12 }
+      playerBounds
     );
   }
 
