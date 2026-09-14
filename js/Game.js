@@ -227,7 +227,10 @@ class Game {
 
     this.solarZones.forEach((solarZone, zoneIndex) => {
       const isAffectedZone = blackoutActive && zoneIndex === activeZoneIndex;
-      solarZone.setActive(!isAffectedZone);
+      solarZone.setActive(
+        !isAffectedZone,
+        this.loadSheddingSchedule.getCountdownSeconds()
+      );
     });
   }
 
