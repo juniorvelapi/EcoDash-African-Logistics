@@ -76,6 +76,39 @@ body {
   color: #ddd;
 }
 
+.route-stats {
+  list-style: none;
+  width: min(22rem, 90%);
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--accent);
+  background: rgba(20, 20, 20, 0.7);
+}
+
+.route-stats li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(233, 196, 106, 0.25);
+  color: #ddd;
+  font-size: 0.95rem;
+}
+
+.route-stats li:last-child {
+  border-bottom: none;
+}
+
+.route-stats strong {
+  color: var(--accent);
+}
+
+.high-score-summary {
+  max-width: 34rem;
+  font-size: 0.85rem;
+  color: #bbb !important;
+}
+
 .screen-panel button {
   pointer-events: auto;
   margin-top: 0.5rem;

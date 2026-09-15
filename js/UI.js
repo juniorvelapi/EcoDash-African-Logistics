@@ -33,6 +33,7 @@ class GameUI {
       () => {}
     );
     this.gameOverPanel.classList.add("hidden");
+    this.attachGameOverStats();
 
     this.overlayElement.appendChild(this.startPanel);
     this.overlayElement.appendChild(this.pausePanel);
@@ -69,8 +70,28 @@ class GameUI {
     this.pausePanel.querySelector("button").onclick = handler;
   }
 
+  attachGameOverStats() {
+    this.gameOverTitle = this.gameOverPanel.querySelector("h1");
+    this.gameOverMessage = this.gameOverPanel.querySelector("p");
+    this.gameOverRestartButton = this.gameOverPanel.querySelector("button");
+
+    this.routeStatsList = document.createElement("ul");
+    this.routeStatsList.className = "route-stats";
+    this.routeStatsList.innerHTML = `
+      <li><span>Mission Score</span><strong data-stat="missionScore">0</strong></li>
+      <li><span>Distance Travelled</span><strong data-stat="distanceKm">0.00 km</strong></li>
+      <li><span>Energy Efficiency</span><strong data-stat="energyEfficiency">0.0%</strong></li>
+    `;
+
+    this.highScoreSummary = document.createElement("p");
+    this.highScoreSummary.className = "high-score-summary";
+
+    this.gameOverPanel.insertBefore(this.routeStatsList, this.gameOverRestartButton);
+    this.gameOverPanel.insertBefore(this.highScoreSummary, this.gameOverRestartButton);
+  }
+
   setRestartHandler(handler) {
-    this.gameOverPanel.querySelector("button").onclick = handler;
+    this.gameOverRestartButton.onclick = handler;
   }
 
   showStart() {
@@ -87,8 +108,29 @@ class GameUI {
     this.pausePanel.classList.add("hidden");
   }
 
-  showGameOver(summaryText) {
-    this.gameOverPanel.querySelector("p").textContent = summaryText;
+  showGameOver(routeSummary) {
+    this.gameOverTitle.textContent = routeSummary.title;
+    this.gameOverMessage.textContent = routeSummary.message;
+
+    this.routeStatsList.querySelector('[data-stat="missionScore"]').textContent =
+      String(routeSummary.missionScore);
+    this.routeStatsList.querySelector('[data-stat="distanceKm"]').textContent =
+      `${routeSummary.distanceKm.toFixed(2)} km`;
+    this.routeStatsList.querySelector('[data-stat="energyEfficiency"]').textContent =
+      `${routeSummary.energyEfficiency.toFixed(1)}%`;
+
+    if (routeSummary.highScores.length > 0) {
+      const topScores = routeSummary.highScores
+        .slice(0, 3)
+        .map((scoreEntry, index) =>
+          `${index + 1}. ${scoreEntry.missionScore} pts · ${scoreEntry.distanceKm.toFixed(1)} km · ${scoreEntry.energyEfficiency.toFixed(0)}%`
+        )
+        .join(" | ");
+      this.highScoreSummary.textContent = `Best routes: ${topScores}`;
+    } else {
+      this.highScoreSummary.textContent = "No saved high scores yet.";
+    }
+
     this.gameOverPanel.classList.remove("hidden");
   }
 

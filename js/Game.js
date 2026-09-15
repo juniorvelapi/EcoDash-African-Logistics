@@ -299,7 +299,10 @@ class Game {
 
   checkGameOverConditions() {
     if (this.playerVehicle.batteryLevel <= 0) {
-      this.endGame("Battery depleted. Recharge at solar microgrids before the next blackout.");
+      this.endGame(
+        "Battery depleted. Recharge at solar microgrids before the next blackout.",
+        false
+      );
       return;
     }
 
@@ -311,7 +314,10 @@ class Game {
     const allDeliveriesComplete = this.deliveryCheckpoints.every((checkpoint) => checkpoint.isCollected);
     if (allDeliveriesComplete) {
       this.missionScore += 25;
-      this.endGame("All deliveries complete! Excellent route planning through load-shedding zones.");
+      this.endGame(
+        "All deliveries complete! Excellent route planning through load-shedding zones.",
+        true
+      );
     }
   }
 
@@ -322,7 +328,7 @@ class Game {
     return (this.playerVehicle.totalDistanceTravelled / this.playerVehicle.batteryUsed) * 2;
   }
 
-  endGame(messageText) {
+  endGame(messageText, routeCompleted) {
     this.gameState = "GAME_OVER";
     this.audioManager.playGameOverSound();
 
@@ -337,8 +343,14 @@ class Game {
     };
 
     const highScores = Storage.saveScore(scoreEntry);
-    const summaryText = `${messageText} Score: ${this.missionScore} | Distance: ${distanceKm.toFixed(2)} km | Efficiency: ${energyEfficiency.toFixed(1)}%`;
-    this.gameUI.showGameOver(summaryText);
+    this.gameUI.showGameOver({
+      title: routeCompleted ? "Deliveries Complete" : "Delivery Failed",
+      message: messageText,
+      missionScore: this.missionScore,
+      distanceKm,
+      energyEfficiency,
+      highScores
+    });
     this.lastHighScores = highScores;
     this.renderFrame();
   }
